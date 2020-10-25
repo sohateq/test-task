@@ -14,7 +14,6 @@ public class CollateralService {
     @Autowired
     private CarService carService;
 
-    @SuppressWarnings("ConstantConditions")
     public Long saveCollateral(Collateral object) {
         if (!(object instanceof CarDto)) {
             throw new IllegalArgumentException();

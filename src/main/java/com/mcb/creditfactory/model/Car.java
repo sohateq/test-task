@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -25,4 +26,15 @@ public class Car {
 
     @Column(name = "assessed_value")
     private BigDecimal value;
+
+    public boolean equalsIgnoreId(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Car car = (Car) o;
+        return Objects.equals(brand, car.brand) &&
+                Objects.equals(model, car.model) &&
+                Objects.equals(power, car.power) &&
+                Objects.equals(year, car.year) &&
+                Objects.equals(value, car.value);
+    }
 }
