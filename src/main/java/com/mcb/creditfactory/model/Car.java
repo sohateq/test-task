@@ -23,6 +23,10 @@ public class Car {
     @Column(name = "year_of_issue")
     private Short year;
 
+    /**
+     * Like standard equals but indifferent fot id field.
+     * Helpful for tests
+     **/
     public boolean equalsIgnoreId(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

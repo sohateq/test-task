@@ -26,6 +26,10 @@ public class Airplane {
     private Integer fuelCapacity;
     private Integer seats;
 
+    /**
+     * Like standard equals but indifferent fot id field.
+     * Helpful for tests
+     **/
     public boolean equalsIgnoreId(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
