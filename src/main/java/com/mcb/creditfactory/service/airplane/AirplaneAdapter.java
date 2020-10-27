@@ -4,9 +4,11 @@ import com.mcb.creditfactory.dto.AirplaneDto;
 import com.mcb.creditfactory.external.CollateralObject;
 import com.mcb.creditfactory.external.CollateralType;
 import lombok.AllArgsConstructor;
+import org.springframework.data.util.Pair;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 
 @AllArgsConstructor
 public class AirplaneAdapter implements CollateralObject {
@@ -14,7 +16,9 @@ public class AirplaneAdapter implements CollateralObject {
 
     @Override
     public BigDecimal getValue() {
-        return BigDecimal.valueOf(240000000); //todo last value from db's 3rd table(?)
+        if (airplane.getAssessments() == null || airplane.getAssessments().isEmpty()) return BigDecimal.ZERO;
+        // return value with most actual date
+        return airplane.getAssessments().stream().max(Comparator.comparing(o -> o.getSecond())).get().getFirst();
     }
 
     @Override
@@ -24,8 +28,9 @@ public class AirplaneAdapter implements CollateralObject {
 
     @Override
     public LocalDate getDate() {
-        //todo last date and value from db
-        return LocalDate.now();
+        if (airplane.getAssessments() == null || airplane.getAssessments().isEmpty()) return LocalDate.now();
+        // return most actual date
+        return airplane.getAssessments().stream().max(Comparator.comparing(Pair::getSecond)).get().getSecond();
     }
 
     @Override

@@ -33,6 +33,9 @@ public class CollateralService {
     }
 
     private Long saveCar(CarDto car) {
+        //todo add assess id
+
+
         boolean approved = carService.approve(car);
         if (!approved) return null;
 
@@ -44,14 +47,21 @@ public class CollateralService {
     }
 
     private Long saveAirplane(AirplaneDto airplane) {
+        if (airplaneService.existById(airplane.getId())) return  null;
+
         boolean approved = airplaneService.approve(airplane);
         if (!approved) return null;
 
-        return Optional.of(airplane)
+        Long savedId = Optional.of(airplane)
                 .map(airplaneService::fromDto)
                 .map(airplaneService::save)
                 .map(airplaneService::getId)
                 .orElse(null);
+
+        boolean assessmentSaved = airplaneService.saveAssessment(airplane, savedId);
+        if (!assessmentSaved) return null;
+
+        return savedId;
     }
 
     private Collateral getCarInfo(CarDto car) {

@@ -12,4 +12,5 @@ public interface CarService {
     Car fromDto(CarDto dto);
     CarDto toDTO(Car car);
     Long getId(Car car);
+    //boolean isExistById(Long id);
 }
