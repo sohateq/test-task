@@ -3,6 +3,7 @@ package com.mcb.creditfactory.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.util.Pair;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -24,4 +25,8 @@ public class CarAssessment {
 
     private BigDecimal value;
     private LocalDate date;
+
+    public Pair<BigDecimal, LocalDate> getPair() {
+        return Pair.of(value, date);
+    }
 }

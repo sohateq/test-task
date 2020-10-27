@@ -6,15 +6,12 @@ import com.mcb.creditfactory.model.Airplane;
 import com.mcb.creditfactory.model.AirplaneAssessment;
 import com.mcb.creditfactory.repository.AirplaneAssessmentRepository;
 import com.mcb.creditfactory.repository.AirplaneRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

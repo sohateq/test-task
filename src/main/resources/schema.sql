@@ -3,8 +3,7 @@ create table CAR (
   brand VARCHAR2(150),
   model VARCHAR2(200),
   power DOUBLE,
-  year_of_issue YEAR,
-  assessed_value DEC(20)
+  year_of_issue YEAR
 );
 
 create table AIRPLANE (

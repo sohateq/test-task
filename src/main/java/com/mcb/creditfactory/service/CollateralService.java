@@ -32,18 +32,29 @@ public class CollateralService {
         throw new IllegalArgumentException();
     }
 
-    private Long saveCar(CarDto car) {
-        //todo add assess id
+    public Collateral assess(Collateral object) {
+        if (object instanceof CarDto) return assessCar((CarDto) object);
+        if (object instanceof AirplaneDto) return assessAirplane((AirplaneDto) object);
 
+        throw new IllegalArgumentException();
+    }
+
+    private Long saveCar(CarDto car) {
+        if (carService.existById(car.getId())) return  null;
 
         boolean approved = carService.approve(car);
         if (!approved) return null;
 
-        return Optional.of(car)
+        Long savedId = Optional.of(car)
                 .map(carService::fromDto)
                 .map(carService::save)
                 .map(carService::getId)
                 .orElse(null);
+
+        boolean assessmentSaved = carService.saveAssessment(car, savedId);
+        if (!assessmentSaved) return null;
+
+        return savedId;
     }
 
     private Long saveAirplane(AirplaneDto airplane) {
@@ -80,5 +91,19 @@ public class CollateralService {
                 .flatMap(airplaneService::load)
                 .map(airplaneService::toDTO)
                 .orElse(null);
+    }
+
+    private Collateral assessAirplane(AirplaneDto airplane) {
+        boolean saved = airplaneService.saveAssessment(airplane, airplane.getId());
+        if (!saved) return null;
+
+        return getAirplaneInfo(airplane);
+    }
+
+    private Collateral assessCar(CarDto car) {
+        boolean saved = carService.saveAssessment(car, car.getId());
+        if (!saved) return null;
+
+        return getCarInfo(car);
     }
 }
