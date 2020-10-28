@@ -25,7 +25,7 @@ public class CarDto implements Collateral {
     private List<Pair<BigDecimal, LocalDate>> assessments;
 
     /**
-     * Like standard equals but indifferent fot id field.
+     * Like standard equals but indifferent fot id field.  Uses smart comparison for assessments
      * Helpful for tests
      **/
     public boolean equalsIgnoreId(Object o) {

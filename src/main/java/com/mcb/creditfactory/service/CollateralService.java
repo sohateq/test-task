@@ -32,6 +32,9 @@ public class CollateralService {
         throw new IllegalArgumentException();
     }
 
+    /**
+     * Adds additional assessments for existing Collateral
+     */
     public Collateral assess(Collateral object) {
         if (object instanceof CarDto) return assessCar((CarDto) object);
         if (object instanceof AirplaneDto) return assessAirplane((AirplaneDto) object);
@@ -39,8 +42,11 @@ public class CollateralService {
         throw new IllegalArgumentException();
     }
 
+    /**
+     * Saves car if it was not saved before
+     */
     private Long saveCar(CarDto car) {
-        if (carService.existById(car.getId())) return  null;
+        if (carService.existById(car.getId())) return null;
 
         boolean approved = carService.approve(car);
         if (!approved) return null;
@@ -57,8 +63,11 @@ public class CollateralService {
         return savedId;
     }
 
+    /**
+     * Saves airplane if it was not saved before
+     */
     private Long saveAirplane(AirplaneDto airplane) {
-        if (airplaneService.existById(airplane.getId())) return  null;
+        if (airplaneService.existById(airplane.getId())) return null;
 
         boolean approved = airplaneService.approve(airplane);
         if (!approved) return null;
@@ -75,6 +84,9 @@ public class CollateralService {
         return savedId;
     }
 
+    /**
+     * Saves car if info with assessment list
+     */
     private Collateral getCarInfo(CarDto car) {
         return Optional.of(car)
                 .map(carService::fromDto)
@@ -84,6 +96,9 @@ public class CollateralService {
                 .orElse(null);
     }
 
+    /**
+     * Saves airplane if info with assessment list
+     */
     private Collateral getAirplaneInfo(AirplaneDto airplane) {
         return Optional.of(airplane)
                 .map(airplaneService::fromDto)
@@ -93,17 +108,23 @@ public class CollateralService {
                 .orElse(null);
     }
 
-    private Collateral assessAirplane(AirplaneDto airplane) {
-        boolean saved = airplaneService.saveAssessment(airplane, airplane.getId());
-        if (!saved) return null;
-
-        return getAirplaneInfo(airplane);
-    }
-
     private Collateral assessCar(CarDto car) {
+        //no assessment for non existing car
+        if (!carService.existById(car.getId())) return null;
+
         boolean saved = carService.saveAssessment(car, car.getId());
         if (!saved) return null;
 
         return getCarInfo(car);
+    }
+
+    private Collateral assessAirplane(AirplaneDto airplane) {
+        //no assessment for non existing airplane
+        if (!airplaneService.existById(airplane.getId())) return null;
+
+        boolean saved = airplaneService.saveAssessment(airplane, airplane.getId());
+        if (!saved) return null;
+
+        return getAirplaneInfo(airplane);
     }
 }

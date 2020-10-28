@@ -13,7 +13,6 @@ import org.springframework.data.util.Pair;
 import org.springframework.http.HttpEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.constraints.AssertTrue;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
@@ -32,8 +31,6 @@ public class TestTaskApplicationTests {
 
     private AirplaneDto testValidAirplane =
             new AirplaneDto(0L, "Boeing", "Boeing-777", "USA", (short) 2005, 15, 200, createValidListForAirplane());
-
-
 
     /**
      * Tests that controller.save saves valid Airplane
@@ -101,15 +98,106 @@ public class TestTaskApplicationTests {
         //set right Id for airplane
         airplaneDto.setId(httpId.getBody());
 
-        //load airplane
-        HttpEntity<Collateral> httpEntity = controller.getInfo(airplaneDto);
-
         //additional assess
         airplaneDto.setAssessments(createInvalidListForAirplane());
         assessmentsCount += airplaneDto.getAssessments().size();
-        httpEntity = controller.assess(airplaneDto);
+        HttpEntity<Collateral> httpEntity = controller.assess(airplaneDto);
         System.out.println("Loaded updated airplane : " + httpEntity.getBody());
+
         Assert.assertTrue(assessmentsCount == (((AirplaneDto)httpEntity.getBody()).getAssessments().size()));
+    }
+
+    /**
+     * Tests that controller.assess will not assess non existing airplane
+     */
+    @Test
+    public void testAssessFakeAirplane() {
+        AirplaneDto airplaneDto = createAirplaneDto(createValidListForAirplane());
+        airplaneDto.setId(-1L);
+        HttpEntity<Collateral> httpEntity = controller.assess(airplaneDto);
+        Assert.assertNull(httpEntity.getBody());
+    }
+
+    /**
+     * Tests that controller.save saves valid Car
+     */
+    @Test
+    public void testSaveCar() {
+        HttpEntity<Long> httpId = controller.save(testValidCar);
+        System.out.println("Saved id: " + httpId.getBody());
+        Assert.assertNotNull(httpId.getBody());
+    }
+
+    /**
+     * Tests that controller.save will not save Car if id is already in database
+     */
+    @Test
+    public void testSaveCarTwice() {
+        HttpEntity<Long> httpId = controller.save(testValidCar);
+
+        testValidCar.setId(httpId.getBody());
+        HttpEntity<Long> httpIdSecond = controller.save(testValidCar);
+
+        Assert.assertNull(httpIdSecond.getBody());
+    }
+
+    /**
+     * Tests that controller.save will not save invalid for ExternalApproveService Car
+     */
+    @Test
+    public void testSaveInvalidCar() {
+        HttpEntity<Long> httpId = controller.save(testInvalidCar);
+        Assert.assertNull(httpId.getBody());
+    }
+
+    /**
+     * Tests that controller.getInfo provides saved Car in one piece
+     */
+    @Test
+    public void testGetInfoCar() {
+        //save CarDto
+        HttpEntity<Long> httpId = controller.save(testValidCar);
+
+        CarDto savedDto = testValidCar;
+        savedDto.setId(httpId.getBody());
+
+        //load saved Car
+        HttpEntity<Collateral> httpEntity = controller.getInfo(savedDto);
+        System.out.println("Loaded car: " + httpEntity.getBody());
+
+        Assert.assertTrue(testValidCar.equalsIgnoreId(httpEntity.getBody()));
+    }
+
+    /**
+     * Tests that controller.assess writes additional assessments to database
+     */
+    @Test
+    public void testAssessCar() {
+        //save valid car
+        CarDto carDto = testValidCar;
+        int assessmentsCount = carDto.getAssessments().size();
+        HttpEntity<Long> httpId = controller.save(carDto);
+        //set right Id for car
+        carDto.setId(httpId.getBody());
+
+        //additional assess
+        carDto.setAssessments(createInvalidListForCar());
+        assessmentsCount += carDto.getAssessments().size();
+        HttpEntity<Collateral> httpEntity = controller.assess(carDto);
+        System.out.println("Loaded updated car: " + httpEntity.getBody());
+
+        Assert.assertTrue(assessmentsCount == (((CarDto)httpEntity.getBody()).getAssessments().size()));
+    }
+
+    /**
+     * Tests that controller.assess will not assess non existing car
+     */
+    @Test
+    public void testAssessFakeCar() {
+        CarDto carDto = testValidCar;
+        carDto.setId(-1L);
+        HttpEntity<Collateral> httpEntity = controller.assess(carDto);
+        Assert.assertNull(httpEntity.getBody());
     }
 
     /**

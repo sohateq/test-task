@@ -2,7 +2,6 @@ package com.mcb.creditfactory.dto;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-
 import com.mcb.creditfactory.utils.AssessmentUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +28,7 @@ public class AirplaneDto implements Collateral {
     private List<Pair<BigDecimal, LocalDate>> assessments;
 
     /**
-     * Like standard equals but indifferent fot id field.
+     * Like standard equals but indifferent fot id field. Uses smart comparison for assessments
      * Helpful for tests
      **/
     public boolean equalsIgnoreId(Object o) {
@@ -44,5 +43,4 @@ public class AirplaneDto implements Collateral {
                 Objects.equals(seats, that.seats) &&
                 AssessmentUtils.assessmentEquals(assessments, that.assessments);
     }
-
 }
